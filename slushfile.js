@@ -13,7 +13,7 @@ function printError(library) {
 }
 
 function getGraphicName() {
-	return s.slugify(shell.pwd().split('/').slice(-1)[0]) + '_' + moment().format('YYYY-M-D');
+	return [moment().format('YYYY-M-D'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
 }
 
 function initGitRepo() {
@@ -52,6 +52,7 @@ gulp.task('copy-templates-directory', function(done) {
 			shell.exec('unzip -q node_modules.zip');
 			shell.exec('rm -rf node_modules.zip');
 			shell.sed('-i', '||YEAR||', new Date().getFullYear(), 'LICENSE');
+			shell.sed('-i', '||GRAPHIC||', getGraphicName(), 'README.md');
 			done();	
 		});
 
