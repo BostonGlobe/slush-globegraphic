@@ -77,8 +77,7 @@ gulp.task('add-to-git-repo', function(done) {
 			message: 'Add ' + getGraphicName() + ' to git repository?',
 			choices: [
 				'None',
-				'GitHub',
-				'Bitbucket'
+				'GitHub'
 			]
 		}
 	],
@@ -92,9 +91,6 @@ gulp.task('add-to-git-repo', function(done) {
 				initGitRepo();
 				shell.exec('hub create BostonGlobe/' + getGraphicName() + ' -p');
 				pushGitRepo();
-			break;
-			case 'Bitbucket':
-				initGitRepo();
 			break;
 		}
 
