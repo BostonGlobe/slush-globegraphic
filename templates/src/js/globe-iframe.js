@@ -11,6 +11,8 @@
 	};
 
 	var setupPym = function() {
+
+		// grab the iframe graphic's container
 		var container = document.getElementById('globe-graphic-container');
 		if(container) {
 			var height = {previous: 0, current: 0};
@@ -34,12 +36,14 @@
 				requestAnimationFrame(pollHeight);
 			};
 
-
 			// make pym available globally (why?)
 			window.pymChild = pym.Child({ renderCallback: window.onPymParentResize });
+
+			// start polling height
 			pollHeight();
 		}
 	};
 
+	// start the whole thing
 	init();
 })();
