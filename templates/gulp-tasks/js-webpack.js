@@ -1,11 +1,19 @@
 var gulp = require('gulp');
-var babel = require('gulp-babel');
 var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
 var browserSync = require('browser-sync');
+var webpack = require('webpack-stream');
 
 gulp.task('js-dev', function() {
-	return gulp.src('src/js/**/*.js')
-		.pipe(babel())
+	return gulp.src('src/js/main.js')
+		.pipe(webpack({
+			module: {
+				loaders: [
+					{ test: /\.js$/, exclude: /node_modules/, loader: 'babel'}
+				]
+			}
+		}))
+		.pipe(rename('bundle.js'))
 		.pipe(gulp.dest('dist/dev/js'))
 		.pipe(browserSync.reload({stream:true}));
 });

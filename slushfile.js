@@ -8,6 +8,14 @@ var chalk = require('chalk');
 var moment = require('moment');
 var s = require('underscore.string');
 
+var config = {
+	webpack: false
+};
+
+function log(s) {
+	console.log(JSON.stringify(s, null, 4));
+}
+
 function printError(library) {
 	console.log(chalk.red("Looks like you didn't install " + library + ". Make sure to install all prerequisites, as detailed in " + chalk.underline.red('https://github.com/BostonGlobe/slush-globegraphic#prerequisites.')));
 }
@@ -54,7 +62,14 @@ gulp.task('copy-templates-directory', function(done) {
 			shell.exec('rm -rf node_modules.zip');
 			shell.sed('-i', '||YEAR||', new Date().getFullYear(), 'LICENSE');
 			shell.sed('-i', '||GRAPHIC||', getGraphicName(), 'README.md');
-			shell.sed('-i', "'js/main.js'", "'js/bundle.js'", 'src/html/index.hbs');
+
+			if (config.webpack) {
+				shell.sed('-i', "'js/main.js'", "'js/bundle.js'", 'src/html/index.hbs');
+				shell.exec('rm gulp-tasks/js.js');
+				shell.exec('mv gulp-tasks/js-webpack.js gulp-tasks/js.js');
+			} else {
+				shell.exec('rm gulp-tasks/js-webpack.js');
+			}
 			done();	
 		});
 
@@ -117,11 +132,24 @@ gulp.task('add-to-git-repo', function(done) {
 
 gulp.task('default', function(done) {
 
-	runSequence(
-		'download-globe-graphic-template',
-		'copy-templates-directory',
-		'add-to-git-repo',
-		done
-	);
+	inquirer.prompt([
+		{
+			type: 'confirm',
+			message: 'Add webpack, a module loader',
+			name: 'webpack',
+			default: false
+		}
+	], function(answers) {
+
+		config.webpack = answers.webpack;
+
+		runSequence(
+			'download-globe-graphic-template',
+			'copy-templates-directory',
+			'add-to-git-repo',
+			done
+		);
+
+	});
 
 });
