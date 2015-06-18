@@ -13,7 +13,6 @@ A basic template to get you up and running FAST. Scaffolds the basic html, css, 
 
 ## TODO
 - tell user what to do when done with slush, e.g. open preview.html, run gulp, etc.
-- add README
 
 ## Instructions
 
