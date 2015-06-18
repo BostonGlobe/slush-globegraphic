@@ -3,7 +3,7 @@
 A basic template to get you up and running FAST. Scaffolds the basic html, css, and javascript necessary for a responsive iframe graphic that plays nice with the Globe.
 
 - [Prerequisites](#prerequisites)
-- [Install](#install)
+- [Quick start](#quick-start)
 - [Workflow](#workflow)
 - [How to deploy](#how-to-deploy)
 - [Why iframes?](#why-iframe)
@@ -22,8 +22,12 @@ A basic template to get you up and running FAST. Scaffolds the basic html, css, 
 - Install [slush](https://github.com/slushjs/slush) and [this generator](): `npm install -g slush slush-globegraphic`
 - If the above gives you trouble, run it as super-user: `sudo npm install -g slush slush-globegraphic`
 
-### Install
-- `slush globegraphic`
+### Quick start
+To create a new graphic, create a new directory, `cd` into it, and run
+    
+    slush globegraphic
+
+Follow all prompts.
 
 ### Run
 To get development up and running:
