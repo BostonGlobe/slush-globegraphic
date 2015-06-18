@@ -6,7 +6,7 @@ var browserSync = require('browser-sync');
 gulp.task('js-dev', function() {
 	return gulp.src('src/js/**/*.js')
 		.pipe(babel())
-		.pipe(gulp.dest('dev/js'))
+		.pipe(gulp.dest('dist/dev/js'))
 		.pipe(browserSync.reload({stream:true}));
 });
 
