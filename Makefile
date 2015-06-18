@@ -27,6 +27,7 @@ all:
 		gulp-stylus \
 		gulp-uglify \
 		node-libs-browser \
+		pym.js \
 		request \
 		require-dir \
 		run-sequence \

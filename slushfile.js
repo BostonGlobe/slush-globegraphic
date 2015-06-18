@@ -55,19 +55,47 @@ gulp.task('copy-templates-directory', function(done) {
 	gulp.src(__dirname + '/templates/**')
 		.pipe(gulp.dest('./'))
 		.on('finish', function() {
+
+			// make user feel at ease
 			console.log('This will take about ten seconds. Take two deep breaths.');
+
 			shell.exec('mkdir src/html');
 			shell.exec('mv src/index.html src/html/index.hbs');
+
+			// unzip node modules
 			shell.exec('unzip -q node_modules.zip');
 			shell.exec('rm -rf node_modules.zip');
+
+			// add correct year to LICENSE
 			shell.sed('-i', '||YEAR||', new Date().getFullYear(), 'LICENSE');
+
+			// add correct graphic name to README
 			shell.sed('-i', '||GRAPHIC||', getGraphicName(), 'README.md');
 
 			if (config.webpack) {
+
+				// rename js/main.js to js/bundle.js
 				shell.sed('-i', "'js/main.js'", "'js/bundle.js'", 'src/html/index.hbs');
+
+				// // remove references to pym and globe iframe, since we'll require them instead
+				// shell.sed('-i', /<!-- \(begin\) globe iframe embed -->([\s\S]*)<!-- \(end\) -->/, "", 'src/html/index.hbs');
+
+				// remove references to pym and jquery, since we'll require it instead
+				shell.sed('-i', "<script src='https://apps.bostonglobe.com/common/js/pym/pym-0.4.1.min.js' type='text/javascript'></script>", "", 'src/html/index.hbs');
+				shell.sed('-i', "<script src='https://apps.bostonglobe.com/common/js/jquery/jquery-1.11.2.min.js' type='text/javascript'></script>", "", 'src/html/index.hbs');
+
+				// add pym to main.js
+				shell.sed('-i', /^/, "window.pym = require('pym.js');\n\n", 'src/js/main.js');
+
+				// remove the non-webpack js task
 				shell.exec('rm gulp-tasks/js.js');
+
+				// rename webpack js task to regular js task
 				shell.exec('mv gulp-tasks/js-webpack.js gulp-tasks/js.js');
+
 			} else {
+
+				// remove the webpack js task
 				shell.exec('rm gulp-tasks/js-webpack.js');
 			}
 			done();	
