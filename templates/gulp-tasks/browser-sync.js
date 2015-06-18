@@ -6,7 +6,7 @@ gulp.task('browser-sync', function() {
     browserSync({
         server: {
             baseDir: './',
-            index: 'embed.html'
+            index: 'preview.html'
         },
         notify: false,
         ghostMode: false

@@ -27,17 +27,6 @@ function pushGitRepo() {
 	shell.exec('git push -u origin master');
 }
 
-gulp.task('check-for-prerequisites', function(done) {
-
-	['hub'].forEach(function(value) {
-		if (!shell.which(value)) {
-			printError(value);
-			shell.exit(1);
-		}
-	});
-	done();
-});
-
 gulp.task('download-globe-graphic-template', function(done) {
 
 	request('https://github.com/russellgoldenberg/globe-graphic-template/archive/master.zip')
@@ -46,7 +35,7 @@ gulp.task('download-globe-graphic-template', function(done) {
 			shell.exec('unzip -q master.zip');
 			shell.exec('mv globe-graphic-template-master/* .');
 			shell.exec('rm -rf master.zip globe-graphic-template-master src/css/main.css LICENSE README.md');
-			shell.sed('-i', "'src/index.html'", "'dist/dev/index.html'", 'embed.html');
+			shell.sed('-i', "'src/index.html'", "'dist/dev/index.html'", 'preview.html');
 			done();
 		});
 
@@ -70,31 +59,55 @@ gulp.task('copy-templates-directory', function(done) {
 
 gulp.task('add-to-git-repo', function(done) {
 
+	var hasHub = shell.which('hub');
+	var choices = ['None', 'Bitbucket'];
+	if (hasHub) {
+		choices.push('GitHub');
+	}
+
 	inquirer.prompt([
 		{
 			type: 'list',
 			name: 'git',
 			message: 'Add ' + getGraphicName() + ' to git repository?',
-			choices: [
-				'None',
-				'GitHub'
-			]
+			choices: choices
 		}
-	],
-	function(answers) {
+	], function(answers) {
 
 		switch(answers.git) {
 
 			case 'None':
+				done();
+			break;
+			case 'Bitbucket':
+				inquirer.prompt([
+					{
+						type: 'input',
+						name: 'username',
+						message: 'Enter your Bitbucket username'
+					},
+					{
+						type: 'password',
+						name: 'password',
+						message: 'Enter your Bitbucket password'
+					}
+				], function(answers) {
+
+					initGitRepo();
+					shell.exec("curl --user " + answers.username + ":" + answers.password + " https://api.bitbucket.org/1.0/repositories/ --data name=" + getGraphicName() + " --data is_private='true'");
+					shell.exec("git remote add origin https://" + answers.username + "@bitbucket.org/" + answers.username + "/" + getGraphicName() + ".git");
+					pushGitRepo();
+					done();
+				});
 			break;
 			case 'GitHub':
 				initGitRepo();
 				shell.exec('hub create BostonGlobe/' + getGraphicName() + ' -p');
 				pushGitRepo();
+				done();
 			break;
 		}
 
-		done();
 	});
 
 });
@@ -102,7 +115,6 @@ gulp.task('add-to-git-repo', function(done) {
 gulp.task('default', function(done) {
 
 	runSequence(
-		'check-for-prerequisites',
 		'download-globe-graphic-template',
 		'copy-templates-directory',
 		'add-to-git-repo',

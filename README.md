@@ -12,15 +12,16 @@ A basic template to get you up and running FAST. Scaffolds the basic html, css, 
 - [Standalone app](#standalone-app)
 
 ## TODO
-- tell user what to do when done with slush, e.g. open embed.html, run gulp, etc.
+- tell user what to do when done with slush, e.g. open preview.html, run gulp, etc.
+- add README
 
 ## Instructions
 
 ### Prerequisites
 
-- Install [hub](https://github.com/github/hub): `brew install hub`
 - Install [slush](https://github.com/slushjs/slush) and [this generator](): `npm install -g slush slush-globegraphic`
 - If the above gives you trouble, run it as super-user: `sudo npm install -g slush slush-globegraphic`
+- Optional: if you want to commit to GitHub, install [hub](https://github.com/github/hub): `brew install hub`
 
 ### Quick start
 To create a new graphic, create a new directory, `cd` into it, and run
