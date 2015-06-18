@@ -13,6 +13,7 @@ gulp.task('download-globe-graphic-template', function(done) {
 			shell.exec('unzip -q master.zip');
 			shell.exec('mv globe-graphic-template-master/* .');
 			shell.exec('rm -rf master.zip globe-graphic-template-master src/css/main.css LICENSE README.md');
+			shell.sed('-i', "'src/index.html'", "'dist/dev/index.html'", 'embed.html');
 			done();
 		});
 
