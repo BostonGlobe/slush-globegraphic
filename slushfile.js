@@ -9,7 +9,8 @@ var moment = require('moment');
 var s = require('underscore.string');
 
 var config = {
-	webpack: false
+	webpack: false,
+	sublimeProject: false
 };
 
 function log(s) {
@@ -98,7 +99,12 @@ gulp.task('copy-templates-directory', function(done) {
 				// remove the webpack js task
 				shell.exec('rm gulp-tasks/js-webpack.js');
 			}
-			done();	
+
+			if (!config.sublimeProject) {
+				shell.exec('rm globegraphic.sublime-project');
+			}
+
+			done();
 		});
 
 });
@@ -166,10 +172,16 @@ gulp.task('default', function(done) {
 			message: 'Add webpack, a module loader',
 			name: 'webpack',
 			default: false
+		},
+		{
+			type: 'confirm',
+			message: 'Add sublime project file',
+			name: 'sublimeProject',
+			default: false
 		}
 	], function(answers) {
 
-		config.webpack = answers.webpack;
+		config = answers;
 
 		runSequence(
 			'download-globe-graphic-template',
