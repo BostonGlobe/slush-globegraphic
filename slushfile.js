@@ -19,6 +19,7 @@ function getGraphicName() {
 function initGitRepo() {
 	shell.exec('git init');
 	shell.exec('git ignore node_modules');
+	shell.exec('git ignore dist');
 	shell.exec('git add .');
 	shell.exec('git commit -m "first commit"');
 }
@@ -53,6 +54,7 @@ gulp.task('copy-templates-directory', function(done) {
 			shell.exec('rm -rf node_modules.zip');
 			shell.sed('-i', '||YEAR||', new Date().getFullYear(), 'LICENSE');
 			shell.sed('-i', '||GRAPHIC||', getGraphicName(), 'README.md');
+			shell.sed('-i', "'js/main.js'", "'js/bundle.js'", 'src/html/index.hbs');
 			done();	
 		});
 
