@@ -10,17 +10,35 @@ gulp.task('download-globe-graphic-template', function(done) {
 	request('https://github.com/russellgoldenberg/globe-graphic-template/archive/master.zip')
 		.pipe(fs.createWriteStream('master.zip'))
 		.on('close', function () {
-			shell.exec('unzip -q master.zip; mv globe-graphic-template-master/* .; rm -rf master.zip globe-graphic-template-master LICENSE README.md');
+			shell.exec('unzip -q master.zip');
+			shell.exec('mv globe-graphic-template-master/* .');
+			shell.exec('rm -rf master.zip globe-graphic-template-master src/css/main.css LICENSE README.md');
 			done();
 		});
 
 });
 
+gulp.task('copy-templates-directory', function(done) {
+
+	gulp.src(__dirname + '/templates/**')
+		.pipe(gulp.dest('./'))
+		.on('finish', function() {
+			shell.exec('mkdir src/html');
+			shell.exec('mv src/index.html src/html/index.hbs');
+			shell.exec('unzip -q node_modules.zip');
+			shell.exec('rm -rf node_modules.zip');
+			done();	
+		});
+
+})
+
 gulp.task('default', function(done) {
 
-	runSequence('download-globe-graphic-template', done);
-
-
+	runSequence(
+		'download-globe-graphic-template',
+		'copy-templates-directory',
+		done
+	);
 
 	// inquirer.prompt([
 	// 	{
@@ -30,23 +48,5 @@ gulp.task('default', function(done) {
 	// 	}
 	// ],
 	// function(answers) {
-
-	// 	// Download http://b.globe.com/graphic-template, unzip
-
-
-
-
-
-
-
-
-
-	// 	gulp.src(__dirname + '/templates/**')
-	// 		.pipe(gulp.dest('./'))
-	// 		.on('finish', function() {
-	// 			console.log('done');
-	// 			done();
-	// 		});
-	// });
 
 });
