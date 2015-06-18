@@ -1,5 +1,4 @@
 # slush-globegraphic
 
 ## TODO
-- copy over the static files
-- when that's done, do something else
+- add README.md to the templates project
