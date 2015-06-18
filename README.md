@@ -155,7 +155,7 @@ Sometimes you want to do a thing based on the height of the browser (ie. make a 
 ```
 3. Replace the entire `snippet.html` code in `embed.html`.
 
-## Standalone app
+## Standalone app (outdated - left here for reference)
 For creating standalone apps on apps.bostonglobe.com.
 
 Follow the [basic setup instructions](#instructions). Then run:
