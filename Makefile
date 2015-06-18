@@ -12,7 +12,6 @@ all:
 		babel-core \
 		babel-loader \
 		browser-sync \
-		d3 \
 		del \
 		gulp \
 		gulp-autoprefixer \
