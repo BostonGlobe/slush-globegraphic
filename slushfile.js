@@ -71,7 +71,7 @@ gulp.task('copy-templates-directory', function(done) {
 			shell.sed('-i', '||YEAR||', new Date().getFullYear(), 'LICENSE');
 
 			// add correct graphic name to README
-			shell.sed('-i', '||GRAPHIC||', getGraphicName(), 'README.md');
+			shell.sed('-i', /GRRRAPHIC/g, getGraphicName(), 'README.md');
 
 			if (config.webpack) {
 
@@ -104,6 +104,24 @@ gulp.task('copy-templates-directory', function(done) {
 
 			if (!config.sublimeProject) {
 				shell.exec('rm globegraphic.sublime-project');
+			}
+
+			if (config.R) {
+
+				// change title: "data" to something appropriate
+				shell.sed('-i', /GRRRAPHIC/g, getGraphicName(), 'data/data.Rmd');
+				
+				// rename data.Rmd
+				shell.exec('mv data/data.Rmd data/' + getGraphicName() + '.Rmd');
+
+				// change makefile
+				shell.sed('-i', /GRRRAPHIC/g, getGraphicName(), 'data/Makefile');
+
+				// move makefile
+				shell.exec('mv data/Mafile .');
+
+			} else {
+				shell.exec('rm -rf data');
 			}
 
 			done();
@@ -179,6 +197,12 @@ gulp.task('default', function(done) {
 			type: 'confirm',
 			message: 'Add sublime project file',
 			name: 'sublimeProject',
+			default: true
+		},
+		{
+			type: 'confirm',
+			message: 'Add R folder',
+			name: 'R',
 			default: true
 		}
 	], function(answers) {

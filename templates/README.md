@@ -1,4 +1,4 @@
-# ||GRAPHIC||
+# GRRRAPHIC
 
 This project was generated with [slush-globegraphic](https://github.com/BostonGlobe/slush-globegraphic). Consult its [README](https://github.com/BostonGlobe/slush-globegraphic) for more information.
 
