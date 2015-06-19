@@ -102,7 +102,9 @@ gulp.task('copy-templates-directory', function(done) {
 				shell.exec('rm src/js/main-webpack.js');
 			}
 
-			if (!config.sublimeProject) {
+			if (config.sublimeProject) {
+				shell.exec('git ignore globegraphic.sublime-workspace');
+			} else {
 				shell.exec('rm globegraphic.sublime-project');
 			}
 
@@ -119,6 +121,9 @@ gulp.task('copy-templates-directory', function(done) {
 
 				// move makefile
 				shell.exec('mv data/Mafile .');
+
+				// ignore Rmd/_cache, _files, .html
+				shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html')
 
 			} else {
 				shell.exec('rm -rf data');
