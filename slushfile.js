@@ -120,7 +120,7 @@ gulp.task('copy-templates-directory', function(done) {
 				shell.sed('-i', /GRRRAPHIC/g, getGraphicName(), 'data/Makefile');
 
 				// move makefile
-				shell.exec('mv data/Mafile .');
+				shell.exec('mv data/Makefile .');
 
 				// ignore Rmd/_cache, _files, .html
 				shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html')
