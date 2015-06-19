@@ -75,18 +75,17 @@ gulp.task('copy-templates-directory', function(done) {
 
 			if (config.webpack) {
 
-				// rename js/main.js to js/bundle.js
+				// replace reference to js/main.js to js/bundle.js
 				shell.sed('-i', "'js/main.js'", "'js/bundle.js'", 'src/html/index.hbs');
 
-				// // remove references to pym and globe iframe, since we'll require them instead
-				// shell.sed('-i', /<!-- \(begin\) globe iframe embed -->([\s\S]*)<!-- \(end\) -->/, "", 'src/html/index.hbs');
+				// rename js/main-webpack.js to js/main.js
+				shell.exec('mv src/js/main-webpack.js src/js/main.js');
 
-				// remove references to pym and jquery, since we'll require it instead
-				shell.sed('-i', "<script src='https://apps.bostonglobe.com/common/js/pym/pym-0.4.1.min.js' type='text/javascript'></script>", "", 'src/html/index.hbs');
-				shell.sed('-i', "<script src='https://apps.bostonglobe.com/common/js/jquery/jquery-1.11.2.min.js' type='text/javascript'></script>", "", 'src/html/index.hbs');
+				// remove references to pym and globe iframe, since we'll require them instead
+				shell.sed('-i', /<!-- \(begin\) globe iframe embed -->([\s\S]*)<!-- \(end\) -->/, "", 'src/html/index.hbs');
 
-				// add pym to main.js
-				shell.sed('-i', /^/, "window.pym = require('pym.js');\n\n", 'src/js/main.js');
+				// remove references to jquery, since we'll require it instead
+				shell.sed('-i', /<!-- \(begin\) js libraries optional([\s\S]*)<!-- \(end\) -->/, "", 'src/html/index.hbs');
 
 				// remove the non-webpack js task
 				shell.exec('rm gulp-tasks/js.js');
@@ -98,6 +97,9 @@ gulp.task('copy-templates-directory', function(done) {
 
 				// remove the webpack js task
 				shell.exec('rm gulp-tasks/js-webpack.js');
+
+				// remove js/main-webpack.js
+				shell.exec('rm src/js/main-webpack.js');
 			}
 
 			if (!config.sublimeProject) {

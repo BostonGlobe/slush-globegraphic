@@ -8,11 +8,13 @@ all:
 
 	# npm install modules
 	cd templates; sudo npm install --save \
+		animation-frame \
 		archieml \
 		babel-core \
 		babel-loader \
 		browser-sync \
 		del \
+		globe-iframe-resizer \
 		gulp \
 		gulp-autoprefixer \
 		gulp-babel \
