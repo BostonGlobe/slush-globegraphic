@@ -173,13 +173,13 @@ gulp.task('default', function(done) {
 			type: 'confirm',
 			message: 'Add webpack, a module loader',
 			name: 'webpack',
-			default: false
+			default: true
 		},
 		{
 			type: 'confirm',
 			message: 'Add sublime project file',
 			name: 'sublimeProject',
-			default: false
+			default: true
 		}
 	], function(answers) {
 
