@@ -21,6 +21,7 @@
     "gulp-smoosher": "0.0.7",
     "gulp-stylus": "^2.0.5",
     "gulp-uglify": "^1.2.0",
+    "json-loader": "^0.5.2",
     "node-libs-browser": "^0.5.2",
     "pym.js": "^0.4.3",
     "request": "^2.58.0",

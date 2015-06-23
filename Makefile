@@ -29,6 +29,7 @@ all:
 		gulp-smoosher \
 		gulp-stylus \
 		gulp-uglify \
+		json-loader \
 		node-libs-browser \
 		pym.js \
 		request \
