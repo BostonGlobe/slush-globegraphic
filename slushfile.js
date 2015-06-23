@@ -31,6 +31,23 @@ function initGitRepo() {
 	shell.exec('git ignore dist');
 	shell.exec('git add .');
 	shell.exec('git commit -m "first commit"');
+
+	ignoreFiles();
+}
+
+function ignoreFiles() {
+
+	if (config.sublimeProject) {
+		shell.exec('git ignore globegraphic.sublime-workspace');
+	} else {
+		shell.exec('rm globegraphic.sublime-project');
+	}
+
+	if (config.R) {
+
+		// ignore Rmd/_cache, _files, .html
+		shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html')
+	}
 }
 
 function pushGitRepo() {
@@ -102,12 +119,6 @@ gulp.task('copy-templates-directory', function(done) {
 				shell.exec('rm src/js/main-webpack.js');
 			}
 
-			if (config.sublimeProject) {
-				shell.exec('git ignore globegraphic.sublime-workspace');
-			} else {
-				shell.exec('rm globegraphic.sublime-project');
-			}
-
 			if (config.R) {
 
 				// change title: "data" to something appropriate
@@ -122,8 +133,14 @@ gulp.task('copy-templates-directory', function(done) {
 				// move makefile
 				shell.exec('mv data/Makefile .');
 
-				// ignore Rmd/_cache, _files, .html
-				shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html')
+				if (config.sublimeProject) {
+					
+					// sublime ignore Rmd/_cache, _files
+					shell.sed('-i', /"node_modules"/, '"node_modules",\n\t\t\t\t"' + getGraphicName() + '_cache",\n\t\t\t\t"' + getGraphicName() + '_files"', 'globegraphic.sublime-project');
+
+					// sublime ignore , .html
+					shell.sed('-i', /"globegraphic.sublime-project"/, '"globegraphic.sublime-project",\n\t\t\t\t"' + getGraphicName() + '.html"', 'globegraphic.sublime-project');
+				}
 
 			} else {
 				shell.exec('rm -rf data');
