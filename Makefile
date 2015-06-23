@@ -14,6 +14,7 @@ all:
 		babel-loader \
 		browser-sync \
 		del \
+		dsv-loader \
 		globe-iframe-resizer \
 		gulp \
 		gulp-autoprefixer \
@@ -33,7 +34,6 @@ all:
 		request \
 		require-dir \
 		run-sequence \
-		webpack \
 		webpack-stream;
 
 	# make node_modules.zip

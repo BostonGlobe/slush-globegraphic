@@ -2,10 +2,11 @@
   "dependencies": {
     "animation-frame": "^0.2.4",
     "archieml": "^0.3.0",
-    "babel-core": "^5.5.8",
+    "babel-core": "^5.6.4",
     "babel-loader": "^5.1.4",
     "browser-sync": "^2.7.12",
     "del": "^1.2.0",
+    "dsv-loader": "^1.0.0",
     "globe-iframe-resizer": "0.0.2",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^2.3.1",
