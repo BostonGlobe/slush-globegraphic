@@ -1,10 +1,11 @@
+'use strict';
+
 var gulp = require('gulp');
 var inquirer = require('inquirer');
 var runSequence = require('run-sequence');
 var shell = require('shelljs');
 var request = require('request');
 var fs = require('fs');
-var chalk = require('chalk');
 var moment = require('moment');
 var s = require('underscore.string');
 
@@ -13,26 +14,12 @@ var config = {
 	sublimeProject: false
 };
 
-function log(s) {
-	console.log(JSON.stringify(s, null, 4));
-}
-
-function printError(library) {
-	console.log(chalk.red("Looks like you didn't install " + library + ". Make sure to install all prerequisites, as detailed in " + chalk.underline.red('https://github.com/BostonGlobe/slush-globegraphic#prerequisites.')));
-}
+// function log(s) {
+// 	console.log(JSON.stringify(s, null, 4));
+// }
 
 function getGraphicName() {
 	return [moment().format('YYYY-M-D'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
-}
-
-function initGitRepo() {
-	shell.exec('git init');
-	shell.exec('git ignore node_modules');
-	shell.exec('git ignore dist');
-	shell.exec('git add .');
-	shell.exec('git commit -m "first commit"');
-
-	ignoreFiles();
 }
 
 function ignoreFiles() {
@@ -48,6 +35,16 @@ function ignoreFiles() {
 		// ignore Rmd/_cache, _files, .html, .Rhistory
 		shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html .Rhistory');
 	}
+}
+
+function initGitRepo() {
+	shell.exec('git init');
+	shell.exec('git ignore node_modules');
+	shell.exec('git ignore dist');
+	shell.exec('git add .');
+	shell.exec('git commit -m "first commit"');
+
+	ignoreFiles();
 }
 
 function pushGitRepo() {
@@ -123,7 +120,7 @@ gulp.task('copy-templates-directory', function(done) {
 
 				// change title: "data" to something appropriate
 				shell.sed('-i', /GRRRAPHIC/g, getGraphicName(), 'data/data.Rmd');
-				
+
 				// rename data.Rmd
 				shell.exec('mv data/data.Rmd data/' + getGraphicName() + '.Rmd');
 
@@ -134,7 +131,7 @@ gulp.task('copy-templates-directory', function(done) {
 				shell.exec('mv data/Makefile .');
 
 				if (config.sublimeProject) {
-					
+
 					// sublime ignore Rmd/_cache, _files
 					shell.sed('-i', /"node_modules"/, '"node_modules",\n\t\t\t\t"' + getGraphicName() + '_cache",\n\t\t\t\t"' + getGraphicName() + '_files"', 'globegraphic.sublime-project');
 
@@ -185,11 +182,11 @@ gulp.task('add-to-git-repo', function(done) {
 						name: 'password',
 						message: 'Enter your Bitbucket password'
 					}
-				], function(answers) {
+				], function(innerAnswers) {
 
 					initGitRepo();
-					shell.exec("curl --user " + answers.username + ":" + answers.password + " https://api.bitbucket.org/1.0/repositories/ --data name=" + getGraphicName() + " --data is_private='true'");
-					shell.exec("git remote add origin https://" + answers.username + "@bitbucket.org/" + answers.username + "/" + getGraphicName() + ".git");
+					shell.exec("curl --user " + innerAnswers.username + ":" + innerAnswers.password + " https://api.bitbucket.org/1.0/repositories/ --data name=" + getGraphicName() + " --data is_private='true'");
+					shell.exec("git remote add origin https://" + innerAnswers.username + "@bitbucket.org/" + innerAnswers.username + "/" + getGraphicName() + ".git");
 					pushGitRepo();
 					done();
 				});
