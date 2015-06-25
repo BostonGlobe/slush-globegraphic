@@ -45,8 +45,8 @@ function ignoreFiles() {
 
 	if (config.R) {
 
-		// ignore Rmd/_cache, _files, .html
-		shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html')
+		// ignore Rmd/_cache, _files, .html, .Rhistory
+		shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html .Rhistory');
 	}
 }
 
