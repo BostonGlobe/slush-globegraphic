@@ -10,6 +10,7 @@ all:
 	cd templates; sudo npm install --save \
 		animation-frame \
 		archieml \
+		babel \
 		babel-core \
 		babel-loader \
 		browser-sync \
