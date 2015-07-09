@@ -22,11 +22,11 @@ all:
 		gulp-babel \
 		gulp-callback \
 		gulp-changed \
-		gulp-combine-media-queries \
 		gulp-hb \
 		gulp-minify-css \
 		gulp-plumber \
 		gulp-rename \
+		gulp-replace \
 		gulp-smoosher \
 		gulp-stylus \
 		gulp-uglify \
