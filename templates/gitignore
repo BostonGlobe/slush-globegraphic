@@ -1,0 +1,8 @@
+node_modules
+dist
+globegraphic.sublime-workspace
+
+GRRAAPHIC_cache
+GRRAAPHIC_files
+GRRAAPHIC.html
+.Rhistory

@@ -1,50 +1,41 @@
 'use strict';
 
-var gulp = require('gulp');
-var inquirer = require('inquirer');
+var gulp        = require('gulp');
+var inquirer    = require('inquirer');
 var runSequence = require('run-sequence');
-var shell = require('shelljs');
-var request = require('request');
-var fs = require('fs');
-var moment = require('moment');
-var s = require('underscore.string');
+var shell       = require('shelljs');
+var request     = require('request');
+var fs          = require('fs');
+var moment      = require('moment');
+var s           = require('underscore.string');
+var pkg         = require('./package.json');
 
 var config = {
 	webpack: false,
 	sublimeProject: false
 };
 
-// function log(s) {
-// 	console.log(JSON.stringify(s, null, 4));
-// }
-
 function getGraphicName() {
-	return [moment().format('YYYY-M-D'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
+	return [moment().format('YYYY-MM-DD'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
 }
 
 function ignoreFiles() {
 
-	if (config.sublimeProject) {
-		shell.exec('git ignore globegraphic.sublime-workspace');
-	} else {
+	if (!config.sublimeProject) {
 		shell.exec('rm globegraphic.sublime-project');
 	}
 
-	if (config.R) {
-
-		// ignore Rmd/_cache, _files, .html, .Rhistory
-		shell.exec('git ignore ' + getGraphicName() + '_cache ' + getGraphicName() + '_files ' + getGraphicName() + '.html .Rhistory');
-	}
+	shell.sed('-i', /GRRAAPHIC/g, getGraphicName(), 'gitignore');
+	shell.exec('mv gitignore .gitignore');
 }
 
 function initGitRepo() {
+
+	ignoreFiles();
 	shell.exec('git init');
-	shell.exec('git ignore node_modules');
-	shell.exec('git ignore dist');
 	shell.exec('git add .');
 	shell.exec('git commit -m "first commit"');
 
-	ignoreFiles();
 }
 
 function pushGitRepo() {
@@ -176,19 +167,16 @@ gulp.task('add-to-git-repo', function(done) {
 						type: 'input',
 						name: 'username',
 						message: 'Enter your Bitbucket username'
-					},
-					{
-						type: 'password',
-						name: 'password',
-						message: 'Enter your Bitbucket password'
 					}
 				], function(innerAnswers) {
 
-					initGitRepo();
-					shell.exec("curl --user " + innerAnswers.username + ":" + innerAnswers.password + " https://api.bitbucket.org/1.0/repositories/ --data name=" + getGraphicName() + " --data is_private='true'");
-					shell.exec("git remote add origin https://" + innerAnswers.username + "@bitbucket.org/" + innerAnswers.username + "/" + getGraphicName() + ".git");
-					pushGitRepo();
-					done();
+						initGitRepo();
+						shell.exec('curl -X POST -v -u ' + innerAnswers.username + ' -H "Content-Type: application/json" https://api.bitbucket.org/2.0/repositories/bostonglobe/' + getGraphicName() + ' -d \'{"scm": "git", "is_private": "true" }\'');
+
+						shell.exec('git remote add origin https://' + innerAnswers.username + '@bitbucket.org/bostonglobe/' + getGraphicName() + '.git');
+						pushGitRepo();
+						done();
+
 				});
 			break;
 			case 'GitHub':
