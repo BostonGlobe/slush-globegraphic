@@ -50,11 +50,11 @@ gulp.task('download-globe-graphic-template', function(done) {
 	// dist folders (dev and prod)
 	request('https://github.com/BostonGlobe/globe-graphic-template/archive/v1.0.0.zip')
 		.pipe(fs.createWriteStream('master.zip'))
-		.on('close', function () {
+		.on('close', function() {
 			shell.exec('unzip -q master.zip');
 			shell.exec('mv globe-graphic-template-master/* .');
 			shell.exec('rm -rf master.zip globe-graphic-template-master src/css/main.css LICENSE README.md');
-			shell.sed('-i', "'src/index.html'", "'dist/dev/index.html'", 'preview.html');
+			shell.sed('-i', '\'src/index.html\'', '\'dist/dev/index.html\'', 'preview.html');
 			done();
 		});
 
@@ -85,16 +85,16 @@ gulp.task('copy-templates-directory', function(done) {
 			if (config.webpack) {
 
 				// replace reference to js/main.js to js/bundle.js
-				shell.sed('-i', "'js/main.js'", "'js/bundle.js'", 'src/html/index.hbs');
+				shell.sed('-i', '\'js/main.js\'', '\'js/bundle.js\'', 'src/html/index.hbs');
 
 				// rename js/main-webpack.js to js/main.js
 				shell.exec('mv src/js/main-webpack.js src/js/main.js');
 
 				// remove references to pym and globe iframe, since we'll require them instead
-				shell.sed('-i', /<!-- \(begin\) globe iframe embed -->([\s\S]*)<!-- \(end\) -->/, "", 'src/html/index.hbs');
+				shell.sed('-i', /<!-- \(begin\) globe iframe embed -->([\s\S]*)<!-- \(end\) -->/, '', 'src/html/index.hbs');
 
 				// remove references to jquery, since we'll require it instead
-				shell.sed('-i', /<!-- \(begin\) js libraries optional([\s\S]*)<!-- \(end\) -->/, "", 'src/html/index.hbs');
+				shell.sed('-i', /<!-- \(begin\) js libraries optional([\s\S]*)<!-- \(end\) -->/, '', 'src/html/index.hbs');
 
 				// remove the non-webpack js task
 				shell.exec('rm gulp-tasks/js.js');
@@ -152,7 +152,7 @@ gulp.task('add-to-git-repo', function(done) {
 			}
 	], function(answers) {
 
-		switch(answers.git) {
+		switch (answers.git) {
 
 			case 'None':
 				done();
@@ -178,6 +178,7 @@ gulp.task('add-to-git-repo', function(done) {
 					done();
 
 				});
+
 				break;
 
 			case 'GitHub':
