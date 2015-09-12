@@ -25,8 +25,7 @@ function ignoreFiles() {
 		shell.exec('rm globegraphic.sublime-project');
 	}
 
-	shell.sed('-i', /GRRAAPHIC/g, getGraphicName(), 'gitignore');
-	shell.exec('mv gitignore .gitignore');
+	shell.sed('-i', /GRRAAPHIC/g, getGraphicName(), '.gitignore');
 }
 
 function initGitRepo() {
@@ -68,6 +67,9 @@ gulp.task('copy-templates-directory', function(done) {
 
 			// make user feel at ease
 			console.log('This will take about ten seconds. Take two deep breaths.');
+
+			shell.exec('mv gitignore .gitignore');
+			shell.exec('mv jscsrc .jscsrc');
 
 			shell.exec('mkdir src/html');
 			shell.exec('mv src/index.html src/html/index.hbs');
@@ -143,14 +145,16 @@ gulp.task('add-to-git-repo', function(done) {
 		choices.push('GitHub');
 	}
 
-	inquirer.prompt([
-			{
-				type: 'list',
-				name: 'git',
-				message: 'Add ' + getGraphicName() + ' to git repository?',
-				choices: choices
-			}
-	], function(answers) {
+	var questions = [
+		{
+			type: 'list',
+			name: 'git',
+			message: 'Add ' + getGraphicName() + ' to git repository?',
+			choices: choices
+		}
+	];
+
+	function handleAnswers(answers) {
 
 		switch (answers.git) {
 
@@ -160,13 +164,15 @@ gulp.task('add-to-git-repo', function(done) {
 
 			case 'Bitbucket':
 
-				inquirer.prompt([
-						{
-							type: 'input',
-							name: 'username',
-							message: 'Enter your Bitbucket username'
-						}
-				], function(innerAnswers) {
+				var innerQuestions = [
+					{
+						type: 'input',
+						name: 'username',
+						message: 'Enter your Bitbucket username'
+					}
+				];
+
+				function handleInnerAnswers(innerAnswers) {
 
 					var username = innerAnswers.username;
 
@@ -177,8 +183,9 @@ gulp.task('add-to-git-repo', function(done) {
 					pushGitRepo();
 					done();
 
-				});
+				}
 
+				inquirer.prompt(innerQuestions, handleInnerAnswers);
 				break;
 
 			case 'GitHub':
@@ -190,42 +197,48 @@ gulp.task('add-to-git-repo', function(done) {
 				break;
 		}
 
-	});
+	}
+
+	inquirer.prompt(questions, handleAnswers);
 
 });
 
 gulp.task('default', function(done) {
 
-	inquirer.prompt([
-			{
-				type: 'confirm',
-				message: 'Add webpack, a module loader',
-				name: 'webpack',
-				default: true
-			},
-			{
-				type: 'confirm',
-				message: 'Add sublime project file',
-				name: 'sublimeProject',
-				default: false
-			},
-			{
-				type: 'confirm',
-				message: 'Add R data analysis setup folder',
-				name: 'R',
-				default: true
-			}
-	], function(answers) {
+	var questions = [
+		{
+			type: 'confirm',
+			message: 'Add webpack, a module loader',
+			name: 'webpack',
+			default: true
+		},
+		{
+			type: 'confirm',
+			message: 'Add sublime project file',
+			name: 'sublimeProject',
+			default: false
+		},
+		{
+			type: 'confirm',
+			message: 'Add R data analysis setup folder',
+			name: 'R',
+			default: true
+		}
+	];
+
+	function handleAnswers(answers) {
 
 		config = answers;
 
 		runSequence(
-				'download-globe-graphic-template',
-				'copy-templates-directory',
-				'add-to-git-repo',
-				done
-				);
+			'download-globe-graphic-template',
+			'copy-templates-directory',
+			'add-to-git-repo',
+			done
+		);
 
-	});
+	}
+
+	inquirer.prompt(questions, handleAnswers);
 
 });
