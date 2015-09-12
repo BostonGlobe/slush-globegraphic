@@ -4,6 +4,7 @@ A basic template to get you up and running FAST. Scaffolds the basic html, css, 
 
 ### Prerequisites
 
+- Install [node](https://nodejs.org/en/)
 - Install [slush](https://github.com/slushjs/slush) and [this generator](https://www.npmjs.com/package/slush-globegraphic): `npm install -g slush slush-globegraphic`
 - If the above gives you trouble, run it as super-user: `sudo npm install -g slush slush-globegraphic`
 - Optional: if you want to commit to GitHub, install [hub](https://github.com/github/hub): `brew install hub`
