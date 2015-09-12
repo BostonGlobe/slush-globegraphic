@@ -44,7 +44,11 @@ function pushGitRepo() {
 
 gulp.task('download-globe-graphic-template', function(done) {
 
-	request('https://github.com/russellgoldenberg/globe-graphic-template/archive/master.zip')
+	// download globe-graphic-template (the starting point for this graphic),
+	// unzip, delete unwanted files
+	// make preview.html point to dist/dev/index.html, since we'll have two
+	// dist folders (dev and prod)
+	request('https://github.com/BostonGlobe/globe-graphic-template/archive/v1.0.0.zip')
 		.pipe(fs.createWriteStream('master.zip'))
 		.on('close', function () {
 			shell.exec('unzip -q master.zip');
@@ -121,16 +125,8 @@ gulp.task('copy-templates-directory', function(done) {
 				// move makefile
 				shell.exec('mv data/Makefile .');
 
-				if (config.sublimeProject) {
-
-					// sublime ignore Rmd/_cache, _files
-					shell.sed('-i', /"node_modules"/, '"node_modules",\n\t\t\t\t"' + getGraphicName() + '_cache",\n\t\t\t\t"' + getGraphicName() + '_files"', 'globegraphic.sublime-project');
-
-					// sublime ignore , .html
-					shell.sed('-i', /"globegraphic.sublime-project"/, '"globegraphic.sublime-project",\n\t\t\t\t"' + getGraphicName() + '.html"', 'globegraphic.sublime-project');
-				}
-
 			} else {
+
 				shell.exec('rm -rf data');
 			}
 
@@ -148,43 +144,49 @@ gulp.task('add-to-git-repo', function(done) {
 	}
 
 	inquirer.prompt([
-		{
-			type: 'list',
-			name: 'git',
-			message: 'Add ' + getGraphicName() + ' to git repository?',
-			choices: choices
-		}
+			{
+				type: 'list',
+				name: 'git',
+				message: 'Add ' + getGraphicName() + ' to git repository?',
+				choices: choices
+			}
 	], function(answers) {
 
 		switch(answers.git) {
 
 			case 'None':
 				done();
-			break;
+				break;
+
 			case 'Bitbucket':
+
 				inquirer.prompt([
-					{
-						type: 'input',
-						name: 'username',
-						message: 'Enter your Bitbucket username'
-					}
+						{
+							type: 'input',
+							name: 'username',
+							message: 'Enter your Bitbucket username'
+						}
 				], function(innerAnswers) {
 
-						initGitRepo();
-						shell.exec('curl -X POST -v -u ' + innerAnswers.username + ' -H "Content-Type: application/json" https://api.bitbucket.org/2.0/repositories/bostonglobe/' + getGraphicName() + ' -d \'{"scm": "git", "is_private": "true" }\'');
+					var username = innerAnswers.username;
 
-						shell.exec('git remote add origin https://' + innerAnswers.username + '@bitbucket.org/bostonglobe/' + getGraphicName() + '.git');
-						pushGitRepo();
-						done();
+					initGitRepo();
+					shell.exec('curl -X POST -v -u ' + username + ' -H "Content-Type: application/json" https://api.bitbucket.org/2.0/repositories/bostonglobe/' + getGraphicName() + ' -d \'{"scm": "git", "is_private": "true" }\'');
+
+					shell.exec('git remote add origin https://' + username + '@bitbucket.org/bostonglobe/' + getGraphicName() + '.git');
+					pushGitRepo();
+					done();
 
 				});
-			break;
+				break;
+
 			case 'GitHub':
+
 				initGitRepo();
 				shell.exec('hub create BostonGlobe/' + getGraphicName() + ' -p');
 				pushGitRepo();
 				done();
-			break;
+				break;
 		}
 
 	});
@@ -194,34 +196,34 @@ gulp.task('add-to-git-repo', function(done) {
 gulp.task('default', function(done) {
 
 	inquirer.prompt([
-		{
-			type: 'confirm',
-			message: 'Add webpack, a module loader',
-			name: 'webpack',
-			default: true
-		},
-		{
-			type: 'confirm',
-			message: 'Add sublime project file',
-			name: 'sublimeProject',
-			default: true
-		},
-		{
-			type: 'confirm',
-			message: 'Add R folder',
-			name: 'R',
-			default: true
-		}
+			{
+				type: 'confirm',
+				message: 'Add webpack, a module loader',
+				name: 'webpack',
+				default: true
+			},
+			{
+				type: 'confirm',
+				message: 'Add sublime project file',
+				name: 'sublimeProject',
+				default: false
+			},
+			{
+				type: 'confirm',
+				message: 'Add R data analysis setup folder',
+				name: 'R',
+				default: true
+			}
 	], function(answers) {
 
 		config = answers;
 
 		runSequence(
-			'download-globe-graphic-template',
-			'copy-templates-directory',
-			'add-to-git-repo',
-			done
-		);
+				'download-globe-graphic-template',
+				'copy-templates-directory',
+				'add-to-git-repo',
+				done
+				);
 
 	});
 
