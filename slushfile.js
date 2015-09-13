@@ -36,6 +36,8 @@ gulp.task('default', function(done) {
 
 gulp.task('copy-template', function(done) {
 
+	console.log('This will take a minute. Take two deep breaths.');
+
 	return gulp.src(__dirname + '/template/**')
 		.pipe(gulp.dest('./'));
 
