@@ -72,7 +72,8 @@ gulp.task('populate-templates', function() {
 
 		}))
 		.pipe(template({
-			graphicName: graphicName
+			graphicName: graphicName,
+			year: moment().year()
 		}))
 		.pipe(gulp.dest('.'));
 
