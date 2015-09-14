@@ -3,12 +3,21 @@
 var gulp        = require('gulp');
 var inquirer    = require('inquirer');
 var runSequence = require('run-sequence');
-// var shell       = require('shelljs');
+var rename      = require('gulp-rename');
+var _           = require('lodash');
+var path        = require('path');
+var template    = require('gulp-template');
+var vinylPaths  = require('vinyl-paths');
+var del         = require('del');
+var moment      = require('moment');
+var s           = require('underscore.string');
+var shell       = require('shelljs');
+
 // var request     = require('request');
 // var fs          = require('fs');
-// var moment      = require('moment');
-// var s           = require('underscore.string');
 // var pkg         = require('./package.json');
+
+var graphicName = [moment().format('YYYY-MM-DD'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
 
 gulp.task('default', function(done) {
 
@@ -24,7 +33,8 @@ gulp.task('default', function(done) {
 	function handleAnswers(answers) {
 
 		runSequence(
-			'copy-template',
+			'copy-files',
+			'populate-templates',
 			done
 		);
 
@@ -34,7 +44,7 @@ gulp.task('default', function(done) {
 
 });
 
-gulp.task('copy-template', function(done) {
+gulp.task('copy-files', function() {
 
 	console.log('This will take a minute. Take two deep breaths.');
 
@@ -42,14 +52,36 @@ gulp.task('copy-template', function(done) {
 		.pipe(gulp.dest('./'));
 
 });
+
+gulp.task('populate-templates', function() {
+
+	// find all .template files,
+	// delete them,
+	// create a new file without the .template,
+	// and run them through gulp-template
+	return gulp.src(['./**/*.template', '!node_modules/**'])
+		.pipe(vinylPaths(del))
+		.pipe(rename(function(p) {
+
+			// get filename without .template at the end
+			var filename = (p.basename + p.extname).replace(/.template$/, '');
+
+			// tell rename how to rename this filename
+			p.extname = path.extname(filename);
+			p.basename = path.basename(filename, p.extname);
+
+		}))
+		.pipe(template({
+			graphicName: graphicName
+		}))
+		.pipe(gulp.dest('.'));
+
+});
+
 // var config = {
 // 	webpack: false,
 // 	sublimeProject: false
 // };
-
-// function getGraphicName() {
-// 	return [moment().format('YYYY-MM-DD'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
-// }
 
 // function ignoreFiles() {
 
