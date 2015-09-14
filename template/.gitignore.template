@@ -1,0 +1,8 @@
+dist
+
+<%= graphicName %>_cache
+<%= graphicName %>_files
+<%= graphicName %>.html
+.Rhistory
+
+*.swp

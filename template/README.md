@@ -1,1 +1,0 @@
-# slushgraphic-template
