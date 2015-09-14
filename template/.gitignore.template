@@ -1,4 +1,5 @@
 dist
+node_modules
 
 <%= graphicName %>_cache
 <%= graphicName %>_files
