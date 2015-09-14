@@ -13,10 +13,6 @@ var moment      = require('moment');
 var s           = require('underscore.string');
 var shell       = require('shelljs');
 
-// var request     = require('request');
-// var fs          = require('fs');
-// var pkg         = require('./package.json');
-
 var graphicName = [moment().format('YYYY-MM-DD'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
 
 gulp.task('default', function(done) {
