@@ -1,0 +1,10 @@
+R:
+
+	Rscript -e "rmarkdown::render('data/<%= graphicName %>.Rmd')"
+	open data/<%= graphicName %>.html
+
+R_deploy:
+
+	cp data/<%= graphicName %>.html /Volumes/www_html/multimedia/graphics/projectFiles/Rmd/
+	rsync -rv data/<%= graphicName %>_files /Volumes/www_html/multimedia/graphics/projectFiles/Rmd
+	open http://private.boston.com/multimedia/graphics/projectFiles/Rmd/<%= graphicName %>.html

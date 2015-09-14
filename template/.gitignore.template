@@ -1,0 +1,9 @@
+dist
+node_modules
+
+<%= graphicName %>_cache
+<%= graphicName %>_files
+<%= graphicName %>.html
+.Rhistory
+
+*.swp

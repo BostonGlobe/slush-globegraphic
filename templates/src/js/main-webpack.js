@@ -1,9 +1,0 @@
-'use strict';
-
-var globeIframe = require('globe-iframe-resizer');
-
-// This fires when the parent of iframe resizes
-var onPymParentResize = function(width) {};
-globeIframe(onPymParentResize);
-
-require('babel/polyfill');
