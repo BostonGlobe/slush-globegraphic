@@ -48,7 +48,7 @@ gulp.task('copy-files', function() {
 
 	console.log('This will take a minute. Take two deep breaths.');
 
-	return gulp.src(__dirname + '/template/**')
+	return gulp.src(__dirname + '/template/**', {dot: true})
 		.pipe(gulp.dest('./'));
 
 });
@@ -59,7 +59,7 @@ gulp.task('populate-templates', function() {
 	// delete them,
 	// create a new file without the .template,
 	// and run them through gulp-template
-	return gulp.src(['./**/*.template', '!node_modules/**'])
+	return gulp.src(['./**/*.template', '!node_modules/**'], {dot:true})
 		.pipe(vinylPaths(del))
 		.pipe(rename(function(p) {
 
