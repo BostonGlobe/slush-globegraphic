@@ -5,7 +5,6 @@ var webpackStream = require('webpack-stream');
 var webpack       = require('webpack');
 
 var config = {
-	watch: false,
 	module: {
 		loaders: [
 			{ test: /\.csv?$/, loader: 'dsv-loader' },
