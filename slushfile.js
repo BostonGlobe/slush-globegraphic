@@ -61,7 +61,9 @@ gulp.task('populate-templates', function() {
 		.pipe(rename(function(p) {
 
 			// get filename without .template at the end
-			var filename = (p.basename + p.extname).replace(/.template$/, '');
+			var filename = (p.basename + p.extname)
+				.replace(/.template$/, '')
+				.replace(/GRAPHIC_NAME/, graphicName);
 
 			// tell rename how to rename this filename
 			p.extname = path.extname(filename);
