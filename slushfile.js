@@ -42,79 +42,56 @@ function askGeneralQuestions(callback) {
 	];
 
 	inquirer.prompt(questions, function(answers) {
-		callback(answers);
+		_.assign(globalAnswers, answers);
+		callback();
 	});
 
 }
 
 function askAppsQuestions(callback) {
 
-	var questions = [
-		{
-			type: 'input',
-			name: 'username',
-			message: 'Enter your shell username'
-		},
-		{
-			type: 'input',
-			name: 'filepath',
-			message: 'Enter the path to your graphic [year]/[month]/[day-graphicName]'
-		}
-	];
+	if (globalAnswers.env === 'apps.bostonglobe.com') {
 
-	inquirer.prompt(questions, function(answers) {
-		callback(answers);
-	});
+		var questions = [
+			{
+				type: 'input',
+				name: 'username',
+				message: 'Enter your shell username'
+			},
+			{
+				type: 'input',
+				name: 'filepath',
+				message: 'Enter the path to your graphic [year]/[month]/[day-graphicName]'
+			}
+		];
+
+		inquirer.prompt(questions, function(answers) {
+			_.assign(globalAnswers, answers);
+			callback();
+		});
+
+	} else {
+		callback();
+	}
+
 }
 
 gulp.task('default', function(done) {
 
-	askGeneralQuestions(function(generalAnswers) {
-
-		if (generalAnswers.env === 'apps.bostonglobe.com') {
-
-			askAppsQuestions(function(appsAnswers) {
-
-				globalAnswers = _.assign(globalAnswers, generalAnswers, appsAnswers);
-
-				runSequence(
-					'copy-files',
-					globalAnswers.R ? 'no-op' : 'delete-R-folder',
-					'populate-templates',
-					'add-to-git-repo',
-					done
-				);
-
-			});
-
-		} else {
-
-			globalAnswers = _.assign(globalAnswers, generalAnswers);
+	askGeneralQuestions(function() {
+		askAppsQuestions(function() {
 
 			runSequence(
 				'copy-files',
-				globalAnswers.R ? 'no-op' : 'delete-R-folder',
+				'delete-R-folder',
 				'populate-templates',
 				'add-to-git-repo',
 				done
 			);
 
-		}
-
+		});
 	});
 
-});
-
-gulp.task('delete-R-folder', function() {
-
-	return del([
-		'data'
-	]);
-
-});
-
-gulp.task('no-op', function(done) {
-	done();
 });
 
 gulp.task('copy-files', function() {
@@ -123,6 +100,20 @@ gulp.task('copy-files', function() {
 
 	return gulp.src(__dirname + '/template/**', {dot: true})
 		.pipe(gulp.dest('./'));
+
+});
+
+gulp.task('delete-R-folder', function(done) {
+
+	if (!globalAnswers.R) {
+
+		return del([
+			'data'
+		]);
+
+	} else {
+		done();
+	}
 
 });
 
