@@ -1,6 +1,10 @@
 var gulp = require('gulp');
-var shell = require('gulp-shell');
+var shell = require('shelljs');
 
-gulp.task('chmod-prod', shell.task([
-  'chmod -R 775 dist/prod'
-]));
+gulp.task('chmod-prod', function(done) {
+
+  shell.exec('chmod -R 775 dist/prod');
+
+	done();
+
+});

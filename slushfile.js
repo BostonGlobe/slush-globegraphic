@@ -13,10 +13,15 @@ var moment      = require('moment');
 var s           = require('underscore.string');
 var shell       = require('shelljs');
 var del         = require('del');
+var fs          = require('fs');
 
 var graphicName = [moment().format('YYYY-MM-DD'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
+var globalAnswers = {
+	graphicName: graphicName,
+	year: moment().year()
+};
 
-gulp.task('default', function(done) {
+function askGeneralQuestions(callback) {
 
 	var questions = [
 		{
@@ -24,22 +29,79 @@ gulp.task('default', function(done) {
 			message: 'Add R data analysis setup folder',
 			name: 'R',
 			default: true
+		},
+		{
+			type: 'list',
+			message: 'Choose a production environment',
+			name: 'env',
+			choices: [
+				'apps.bostonglobe.com',
+				'Methode'
+			]
 		}
 	];
 
-	function handleAnswers(answers) {
+	inquirer.prompt(questions, function(answers) {
+		callback(answers);
+	});
 
-		runSequence(
-			'copy-files',
-			answers.R ? 'no-op' : 'delete-R-folder',
-			'populate-templates',
-			'add-to-git-repo',
-			done
-		);
+}
 
-	}
+function askAppsQuestions(callback) {
 
-	inquirer.prompt(questions, handleAnswers);
+	var questions = [
+		{
+			type: 'input',
+			name: 'username',
+			message: 'Enter your shell username'
+		},
+		{
+			type: 'input',
+			name: 'filepath',
+			message: 'Enter the path to your graphic [year]/[month]/[day-graphicName]'
+		}
+	];
+
+	inquirer.prompt(questions, function(answers) {
+		callback(answers);
+	});
+}
+
+gulp.task('default', function(done) {
+
+	askGeneralQuestions(function(generalAnswers) {
+
+		if (generalAnswers.env === 'apps.bostonglobe.com') {
+
+			askAppsQuestions(function(appsAnswers) {
+
+				globalAnswers = _.assign(globalAnswers, generalAnswers, appsAnswers);
+
+				runSequence(
+					'copy-files',
+					globalAnswers.R ? 'no-op' : 'delete-R-folder',
+					'populate-templates',
+					'add-to-git-repo',
+					done
+				);
+
+			});
+
+		} else {
+
+			globalAnswers = _.assign(globalAnswers, generalAnswers);
+
+			runSequence(
+				'copy-files',
+				globalAnswers.R ? 'no-op' : 'delete-R-folder',
+				'populate-templates',
+				'add-to-git-repo',
+				done
+			);
+
+		}
+
+	});
 
 });
 
@@ -84,10 +146,7 @@ gulp.task('populate-templates', function() {
 			p.basename = path.basename(filename, p.extname);
 
 		}))
-		.pipe(template({
-			graphicName: graphicName,
-			year: moment().year()
-		}))
+		.pipe(template(globalAnswers))
 		.pipe(gulp.dest('.'));
 
 });
