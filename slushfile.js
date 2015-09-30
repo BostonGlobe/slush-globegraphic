@@ -12,6 +12,7 @@ var del         = require('del');
 var moment      = require('moment');
 var s           = require('underscore.string');
 var shell       = require('shelljs');
+var del         = require('del');
 
 var graphicName = [moment().format('YYYY-MM-DD'), s.slugify(shell.pwd().split('/').slice(-1)[0])].join('_');
 
@@ -30,6 +31,7 @@ gulp.task('default', function(done) {
 
 		runSequence(
 			'copy-files',
+			answers.R ? 'no-op' : 'delete-R-folder',
 			'populate-templates',
 			'add-to-git-repo',
 			done
@@ -39,6 +41,18 @@ gulp.task('default', function(done) {
 
 	inquirer.prompt(questions, handleAnswers);
 
+});
+
+gulp.task('delete-R-folder', function() {
+
+	return del([
+		'data'
+	]);
+
+});
+
+gulp.task('no-op', function(done) {
+	done();
 });
 
 gulp.task('copy-files', function() {
