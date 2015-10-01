@@ -160,7 +160,7 @@ function pushGitRepo() {
 
 function addToBitbucket(callback) {
 
-	var username = answers.bitbucketUsername;
+	var username = globalAnswers.bitbucketUsername;
 
 	initGitRepo();
 	shell.exec('curl -X POST -u ' + username + ' -H "Content-Type: application/json" https://api.bitbucket.org/2.0/repositories/bostonglobe/' + graphicName + ' -d \'{"scm": "git", "is_private": "true" }\'');
