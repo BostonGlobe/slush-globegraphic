@@ -1,5 +1,5 @@
 module.exports = {
 	host: 'shell.boston.com',
-	username: '<%= username %>',
+	username: '<%= shellUsername %>',
 	filepath: '/web/bgapps/html/graphics/<%= filepath %>'
 };

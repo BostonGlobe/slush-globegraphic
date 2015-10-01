@@ -21,7 +21,13 @@ var globalAnswers = {
 	year: moment().year()
 };
 
-function askGeneralQuestions(callback) {
+function askQuestions(callback) {
+
+	var hasHub = shell.which('hub');
+	var choices = ['None', 'Bitbucket'];
+	if (hasHub) {
+		choices.push('GitHub');
+	}
 
 	var questions = [
 		{
@@ -38,6 +44,36 @@ function askGeneralQuestions(callback) {
 				'apps.bostonglobe.com',
 				'Methode'
 			]
+		},
+		{
+			type: 'input',
+			name: 'shellUsername',
+			message: 'Enter your shell username',
+			when: function(answers) {
+				return answers.env === 'apps.bostonglobe.com';
+			}
+		},
+		{
+			type: 'input',
+			name: 'filepath',
+			message: 'Enter the path to your graphic [year]/[month]/[day-graphicName]',
+			when: function(answers) {
+				return answers.env === 'apps.bostonglobe.com';
+			}
+		},
+		{
+			type: 'list',
+			name: 'git',
+			message: 'Add ' + graphicName + ' to git repository?',
+			choices: choices
+		},
+		{
+			type: 'input',
+			name: 'bitbucketUsername',
+			message: 'Enter your Bitbucket username',
+			when: function(answers) {
+				return answers.git === 'Bitbucket';
+			}
 		}
 	];
 
@@ -48,48 +84,18 @@ function askGeneralQuestions(callback) {
 
 }
 
-function askAppsQuestions(callback) {
-
-	if (globalAnswers.env === 'apps.bostonglobe.com') {
-
-		var questions = [
-			{
-				type: 'input',
-				name: 'username',
-				message: 'Enter your shell username'
-			},
-			{
-				type: 'input',
-				name: 'filepath',
-				message: 'Enter the path to your graphic [year]/[month]/[day-graphicName]'
-			}
-		];
-
-		inquirer.prompt(questions, function(answers) {
-			_.assign(globalAnswers, answers);
-			callback();
-		});
-
-	} else {
-		callback();
-	}
-
-}
-
 gulp.task('default', function(done) {
 
-	askGeneralQuestions(function() {
-		askAppsQuestions(function() {
+	askQuestions(function() {
 
-			runSequence(
-				'copy-files',
-				'delete-R-folder',
-				'populate-templates',
-				'add-to-git-repo',
-				done
-			);
+		runSequence(
+			'copy-files',
+			'delete-R-folder',
+			'populate-templates',
+			'add-to-git-repo',
+			done
+		);
 
-		});
 	});
 
 });
@@ -152,9 +158,9 @@ function pushGitRepo() {
 	shell.exec('git push -u origin master');
 }
 
-function addToBitbucket(answers, callback) {
+function addToBitbucket(callback) {
 
-	var username = answers.username;
+	var username = answers.bitbucketUsername;
 
 	initGitRepo();
 	shell.exec('curl -X POST -u ' + username + ' -H "Content-Type: application/json" https://api.bitbucket.org/2.0/repositories/bostonglobe/' + graphicName + ' -d \'{"scm": "git", "is_private": "true" }\'');
@@ -175,53 +181,22 @@ function addToGithub(callback) {
 
 gulp.task('add-to-git-repo', function(done) {
 
-	var hasHub = shell.which('hub');
-	var choices = ['None', 'Bitbucket'];
-	if (hasHub) {
-		choices.push('GitHub');
+	switch (globalAnswers.git) {
+
+		case 'None':
+
+			done();
+			break;
+
+		case 'Bitbucket':
+
+			addToBitbucket(done);
+			break;
+
+		case 'GitHub':
+
+			addToGithub(done);
+			break;
 	}
-
-	var questions = [
-		{
-			type: 'list',
-			name: 'git',
-			message: 'Add ' + graphicName + ' to git repository?',
-			choices: choices
-		}
-	];
-
-	function handleAnswers(answers) {
-
-		switch (answers.git) {
-
-			case 'None':
-
-				done();
-				break;
-
-			case 'Bitbucket':
-
-				var innerQuestions = [
-					{
-						type: 'input',
-						name: 'username',
-						message: 'Enter your Bitbucket username'
-					}
-				];
-
-				inquirer.prompt(innerQuestions, function(innerAnswers) {
-					addToBitbucket(innerAnswers, done);
-				});
-				break;
-
-			case 'GitHub':
-
-				addToGithub(done);
-				break;
-		}
-
-	}
-
-	inquirer.prompt(questions, handleAnswers);
 
 });
