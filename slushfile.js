@@ -124,11 +124,11 @@ gulp.task('delete-files', function(done) {
 		deletions.push('Makefile.template');
 	}
 
-	if (!globalAnswers.env !== 'Methode') {
+	if (globalAnswers.env === 'apps.bostonglobe.com') {
+		deletions.push('methode.jpt');
+	} else {
 		deletions.push('methode-apps.jpt.template');
 		deletions.push('ssh-config.js.template');
-	} else {
-		deletions.push('methode.jpt');
 	}
 
 	if (!globalAnswers.ai2html) {
