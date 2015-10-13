@@ -7,7 +7,9 @@ gulp.task('default', ['dev'], function () {
 	gulp.watch('src/data/*.json',                ['html-dev']);
 	gulp.watch('src/html/**/*.hbs',              ['html-dev']);
 	gulp.watch('src/js/**/*.js',                 ['js-dev']);
+	<% if (ai2html) { %>
 	gulp.watch('src/html/partials/ai2html/**/*', ['ai2html-dev']);
+	<% } %>
 	gulp.watch('src/assets/**/*',                ['assets-dev']);
 	gulp.watch('dist/dev/index.html',            ['browser-sync-reload']);
 });
@@ -18,7 +20,9 @@ gulp.task('dev', function() {
 		'css-dev',
 		'js-dev',
 		'assets-dev',
+		<% if (ai2html) { %>
 		'ai2html-dev',
+		<% } %>
 		'html-dev',
 		'browser-sync'
 	);

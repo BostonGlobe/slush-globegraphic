@@ -37,6 +37,12 @@ function askQuestions(callback) {
 			default: true
 		},
 		{
+			type: 'confirm',
+			message: 'Add ai2html integration',
+			name: 'ai2html',
+			default: true
+		},
+		{
 			type: 'list',
 			message: 'Choose a production environment',
 			name: 'env',
@@ -90,7 +96,7 @@ gulp.task('default', function(done) {
 
 		runSequence(
 			'copy-files',
-			'delete-R-folder',
+			'delete-files',
 			'populate-templates',
 			'add-to-git-repo',
 			done
@@ -109,17 +115,27 @@ gulp.task('copy-files', function() {
 
 });
 
-gulp.task('delete-R-folder', function(done) {
+gulp.task('delete-files', function(done) {
+
+	var deletions = [];
 
 	if (!globalAnswers.R) {
-
-		return del([
-			'data'
-		]);
-
-	} else {
-		done();
+		deletions.push('data');
+		deletions.push('Makefile.template');
 	}
+
+	if (!globalAnswers.env !== 'Methode') {
+		deletions.push('methode-apps.jpt.template');
+		deletions.push('ssh-config.js.template');
+	} else {
+		deletions.push('methode.jpt');
+	}
+
+	if (!globalAnswers.ai2html) {
+		deletions.push('gulp-tasks/ai2html.js');
+	}
+
+	return del(deletions);
 
 });
 
@@ -129,7 +145,7 @@ gulp.task('populate-templates', function() {
 	// delete them,
 	// create a new file without the .template,
 	// and run them through gulp-template
-	return gulp.src(['./**/*.template', '!node_modules/**'], {dot:true})
+	return gulp.src(['./*.template', './**/*.template', '!node_modules/**'], {dot:true})
 		.pipe(vinylPaths(del))
 		.pipe(rename(function(p) {
 
