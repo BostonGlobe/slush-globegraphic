@@ -1,0 +1,20 @@
+ .skip-to-main
+ 	width 1px 
+ 	height 1px 
+ 	overflow hidden
+ 	position absolute
+ 	&:focus 
+ 		width auto
+ 		height auto
+ 		background-color #efefef
+ 		padding 0.5em 
+ 		font-family $benton
+ 		z-index 1
+ 	
+// fade image in after load with lazysizes
+.lazyload, .lazyloading
+	opacity 0
+
+.lazyloaded
+	opacity 1
+	transition opacity 300ms
